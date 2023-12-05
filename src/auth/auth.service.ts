@@ -16,15 +16,26 @@ export class AuthService {
     
     // 1. Encriptar la contraseña
     try {
-      const newUSer = new this.userModel( createUserDto )
+      // Desestructuro el password y todo lo demas queda almacenado en userData
+      const {password, ...userData } = createUserDto;
+
+      const newUSer = new this.userModel({
+        password: bcryptjs.hashSync( password, 10),
+        ...userData
+      })
+
+      await newUSer.save()
+      // De esta forma la contraseña no sera visible cuando se crea el usuario
+      const { password:_, ...user } = newUSer.toJSON()
+
+      return user;
+
     } catch (error) {
       if( error.code === 1100){
         throw new BadRequestException( `${ createUserDto.email} already exists!`)
       }
       throw new InternalServerErrorException('Somenthing terrible happen!')
     }
-    
-
     
     // 2. Guardar el usuario
     // 3. Generar el JWT
