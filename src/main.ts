@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors();
+
   // Configura para que la informacion sea enviada de acuerdo a las especificaciones del back
   app.useGlobalPipes( new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, }) );
 
